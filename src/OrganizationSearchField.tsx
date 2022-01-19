@@ -47,7 +47,7 @@ export function OrganizationSearchField({ setError, setOrganization, userError, 
       await getUsers();
     })()
 
-  }, [searchString, retry]);
+  }, [searchString, retry, setError, setOrganization, setUserError]);
 
   React.useEffect(() => {
     if (!open) {
