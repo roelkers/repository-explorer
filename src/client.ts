@@ -14,12 +14,22 @@ export const getOrg = async (org: string) => {
   return fetch(`${BASE_URL}/orgs/${org}`).then((res) => res.json());
 };
 
+export interface ApiResponse extends Response {
+    errors?: [{
+      message: string;
+    }]
+}
+
 const fetchHandler = 
-    (res : Response) => {
+   async (res : ApiResponse) => {
+      const jsonRes = await res.json();
       if(!res.ok) {
-        throw Error(res.statusText)
+        if(jsonRes.errors && Array.isArray(jsonRes.errors)){
+          throw new Error(jsonRes.errors[0].message)
+        }
+        throw new Error(jsonRes.statusText || "Error: Something went wrong." )
       }
-      return res.json()
+      return jsonRes 
     }
 
 const fetchErrorHandler = (err: any) => { throw new Error('Error: Network Error')}

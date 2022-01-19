@@ -8,20 +8,26 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Pagination } from '@mui/material';
+import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
+import { User } from './client'
 
 interface ResultsTableProps {
   repositories: Repository[]
   setPage: Dispatch<SetStateAction<number>> 
   page: number;
+  organization: User | null;
 }
 
 const PAGE_SIZE = 10
 
-export const ResultsTable = ({ repositories, setPage, page }: ResultsTableProps) => {
+export const ResultsTable = ({ organization, repositories, setPage, page }: ResultsTableProps) => {
   const pageCount = Math.ceil(repositories.length / PAGE_SIZE);
-  if(repositories.length === 0) {
+  if(!organization) {
     return null
+  }
+  if(repositories.length === 0) {
+    return <Typography sx={{ mt: 4}}variant="h5" >No repositories were found matching the filters.</Typography> 
   }
   const handleChangePagination = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value)

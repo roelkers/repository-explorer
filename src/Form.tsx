@@ -15,12 +15,13 @@ interface FormProps {
   setError: Dispatch<SetStateAction<string>>
   error: string;
   setPage: Dispatch<SetStateAction<number>> 
+  organization: User | null;
+  setOrganization: Dispatch<SetStateAction<User | null>>
 }
 
-export const Form = ({ setRepositories, error, setError, setPage }: FormProps) => {
-  const [organization, setOrganization] = React.useState<User | null>(null)
-  const [minIssues, setMinIssues] = React.useState<number | null>(null)
-  const [maxIssues, setMaxIssues] = React.useState<number | null>(null)
+export const Form = ({ setRepositories, error, setError, setPage, organization, setOrganization }: FormProps) => {
+  const [minIssues, setMinIssues] = React.useState<number | string>("")
+  const [maxIssues, setMaxIssues] = React.useState<number | string>("")
   const [repositoryName, setRepositoryName] = React.useState("")
   const [rawResults, setRawResults] = React.useState<Repository[]>([]);
   const [loading, setLoading] = React.useState(false)
@@ -29,10 +30,20 @@ export const Form = ({ setRepositories, error, setError, setPage }: FormProps) =
   const [userError, setUserError] = React.useState(false)
   
   const handleChangeMinIssues = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMinIssues(Number(event.target.value) || null)
+    if(event.target.value > maxIssues) {
+      setError('Min. issues must be <= than min. issues')
+      return
+    }
+    setError('')
+    setMinIssues(Number(event.target.value))
   }
   const handleChangeMaxIssues = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMaxIssues(Number(event.target.value) || null)
+    if(event.target.value < minIssues) {
+      setError('Max. issues must be >= than min. issues')
+      return
+    }
+    setError('')
+    setMaxIssues(Number(event.target.value))
   }
   const handleChangeRepository = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRepositoryName(event.target.value)
@@ -41,7 +52,7 @@ export const Form = ({ setRepositories, error, setError, setPage }: FormProps) =
   useEffect(() => {
     
     (async () => {
-      if(organization && repositoryName) {
+      if(organization) {
         setRetry(false)
         setLoading(true);
         setRepositoryError(false)
@@ -52,19 +63,19 @@ export const Form = ({ setRepositories, error, setError, setPage }: FormProps) =
         } catch(error: any) {
           setError(error.message)
           setRepositoryError(true)
-          setRepositories([])
+          setRawResults([])
         }
         setLoading(false)
       }
     })();
 
-  }, [organization, repositoryName, retry])
+  }, [organization, repositoryName, retry, setError, setPage, setRepositories])
 
   useEffect(() => {
     setRepositories(rawResults.filter(r => (
       !maxIssues || r.open_issues_count < maxIssues) && 
         (!minIssues || r.open_issues_count >= minIssues))) 
-  },[rawResults, minIssues, maxIssues])
+  },[rawResults, minIssues, maxIssues, setRepositories])
 
   return (
     <Box>
