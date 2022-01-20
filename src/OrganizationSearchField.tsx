@@ -6,7 +6,7 @@ import { searchUsers, User } from './client';
 import debouncePromise from 'awesome-debounce-promise'
 import { Button } from '@mui/material';
 
-const debouncedSearchUsers = debouncePromise(searchUsers, 200)
+const debouncedSearchUsers = debouncePromise(searchUsers, 500)
 
 interface OrganizationSearchFieldProps {
   setError : Dispatch<SetStateAction<string>>

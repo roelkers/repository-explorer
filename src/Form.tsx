@@ -8,7 +8,7 @@ import { searchRepositories, User } from './client'
 
 import debouncePromise from 'awesome-debounce-promise'
 
-const debouncedSearchRepos = debouncePromise(searchRepositories, 200)
+const debouncedSearchRepos = debouncePromise(searchRepositories, 500)
 
 interface FormProps {
   setRepositories: Dispatch<SetStateAction<Repository[]>>
@@ -30,7 +30,7 @@ export const Form = ({ setRepositories, error, setError, setPage, organization, 
   const [userError, setUserError] = React.useState(false)
   
   const handleChangeMinIssues = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if(event.target.value > maxIssues) {
+    if(maxIssues && event.target.value > maxIssues) {
       setError('Min. issues must be <= than min. issues')
       return
     }

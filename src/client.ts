@@ -1,5 +1,11 @@
 const BASE_URL = "https://api.github.com";
 
+export interface ApiResponse extends Response {
+    errors?: [{
+      message: string;
+    }]
+}
+
 export interface User {
     login: string;
     id: number;
@@ -8,16 +14,6 @@ export interface User {
 export interface SearchUsersResponse {
   total_count: number;
   items: Array<User>;
-}
-
-export const getOrg = async (org: string) => {
-  return fetch(`${BASE_URL}/orgs/${org}`).then((res) => res.json());
-};
-
-export interface ApiResponse extends Response {
-    errors?: [{
-      message: string;
-    }]
 }
 
 const fetchHandler = 
